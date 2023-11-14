@@ -10,8 +10,7 @@ class stargeneration():
     hydros=0
     gov=0
     techlevel=0
-
-
+    lawlevel=0
 
     def __init__(self):
         self.data=open(filename,"r")
@@ -19,3 +18,5 @@ class stargeneration():
         self.atmosphere=(random.randint(1,6) + random.randint(1.6) - 7 + self.mainworld)
         if self.mainworld == 0:self.atmosphere = 0
         self.hydros = (random.randint(1,6) + random.randint(1,6) - 7 + self.mainworld)
+        self.populus=(random.randint(1,6) + random.randint(1,6) - 2)
+        self.gov=(random.randint(1,6) + random.randint(1,6) - 7 + self.populus)
