@@ -20,3 +20,34 @@ class stargeneration():
         self.hydros = (random.randint(1,6) + random.randint(1,6) - 7 + self.mainworld)
         self.populus=(random.randint(1,6) + random.randint(1,6) - 2)
         self.gov=(random.randint(1,6) + random.randint(1,6) - 7 + self.populus)
+        self.lawlevel=(random.randint(1,6) + random.randint(1,6) - 7 + self.gov)
+
+
+        self.info = {"dice roll": self.mainworld}
+        self/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
