@@ -24,12 +24,36 @@ class stargeneration():
 
 
         self.info = {"dice roll": self.mainworld}
-        self/
+        self
 
 
 
 
-
+#def generateClusters():
+    #c = 0
+    #cx = 0
+    #cy = 0
+    #cz = 0
+    #rad = random.uniform(CLUSRADA, CLUSRADB)
+    #num = random.uniform(NUMCLUSA, NUMCLUSB)
+    #clusters.append((cx, cy, cz, rad, num))
+    #c = 1
+    #while c < NUMCB:
+        # random distance from centre
+        #dist = random.uniform(CLUSRAD, GALX)
+        # any rotation- clusters can be anywhere
+        #theta = random.random() * 360
+        #cx = math.cos(theta * math.pi / 180.0) * dist
+        #cy = math.sin(theta * math.pi / 180.0) * dist
+        #cz = random.random() * GALZ * 2.0 - GALZ
+        #rad = random.uniform(CLUSRADA, CLUSRADB)
+        #num = random.uniform(NUMCLUSA, NUMCLUSB)
+        # add cluster to clusters array
+        #clusters.append((cx, cy, cz, rad, num))
+        # process next
+        #c = c+1
+        #sran = 0
+        #cran = 0
 
 
 
