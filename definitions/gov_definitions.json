@@ -1,0 +1,20 @@
+{
+    "values": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D"],
+    "descriptions": {
+      "0": "No government structure",
+      "1": "Company/Corporation",
+      "2": "Participating democracy",
+      "3": "Self-perpetuating oligarchy",
+      "4": "Representative democracy",
+      "5": "Feudal technocracy",
+      "6": "Captive government",
+      "7": "Balkanization",
+      "8": "Civil service bureaucracy",
+      "9": "Impersonal bureaucracy",
+      "A": "Charismatic dictator",
+      "B": "Non-charismatic dictator",
+      "C": "Charismatic oligarchy",
+      "D": "Religious dictatorship"
+    }
+  }
+  

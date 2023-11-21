@@ -1,0 +1,21 @@
+{
+  "values": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"],
+  "descriptions": {
+    "0": "No atmosphere",
+    "1": "Trace",
+    "2": "Very thin, tainted",
+    "3": "Very thin",
+    "4": "Thin, tainted",
+    "5": "Thin",
+    "6": "Standard",
+    "7": "Standard tainted",
+    "8": "Dense",
+    "9": "Dense tainted",
+    "A": "Exotic",
+    "B": "Corrosive",
+    "C": "Insidious",
+    "D": "Dense high",
+    "E": "Ellipsoid",
+    "F": "Thin, low"
+  }
+}

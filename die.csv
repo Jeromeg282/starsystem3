@@ -1,4 +1,4 @@
-import csv
+
 
 
 {"Die" : "2", "Starport" : "A", "Navel" : "no" , "Scout" : "no" , "Gas" : "yes" , "Planetoids" : "yes" }
