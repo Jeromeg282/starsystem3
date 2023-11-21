@@ -1,72 +1,90 @@
 #Python3
 
+
+
 import random
-#need to restore from db, then retrive then display
-filename = "die.csv"
-class stargeneration():
-    mainworld=0
-    atmosphere=0
-    populus=0
-    hydros=0
-    gov=0
-    techlevel=0
-    lawlevel=0
+import json
 
-    def __init__(self):
-        self.data=open(filename,"r")
-        self.mainworld=(random.randint(1,6) + random.randint(1,6) - 2)
-        self.atmosphere=(random.randint(1,6) + random.randint(1.6) - 7 + self.mainworld)
-        if self.mainworld == 0:self.atmosphere = 0
-        self.hydros = (random.randint(1,6) + random.randint(1,6) - 7 + self.mainworld)
-        self.populus=(random.randint(1,6) + random.randint(1,6) - 2)
-        self.gov=(random.randint(1,6) + random.randint(1,6) - 7 + self.populus)
-        self.lawlevel=(random.randint(1,6) + random.randint(1,6) - 7 + self.gov)
+class StarSystemGenerator:
+    def __init__(self, file_path):
+        self.system_contents_table = self.read_system_contents_table(file_path)
+
+    def roll_dice(self, sides):
+        return random.randint(1, sides)
+
+    def read_system_contents_table(self, file_path):
+        with open(file_path, 'r') as file:
+            try:
+                data = [json.loads(line) for line in file]
+                return data
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON: {e}")
+                return None
+
+    def generate_star_system(self):
+        system = random.choice(self.system_contents_table)
+
+        
+        die_roll = int(system["Die"])
+
+        starport_die = self.roll_dice(6)
+        if starport_die <= 2:
+            system["Starport"] = "A"
+        elif starport_die <= 4:
+            system["Starport"] = "B"
+        elif starport_die <= 6:
+            system["Starport"] = "C"
+
+        
+        if system["Starport"] not in ["C", "D", "E", "X"]:
+            system["Navel"] = "yes"
+
+       
+        if system["Starport"] not in ["E", "X"]:
+            scout_base_die = self.roll_dice(6)
+            if system["Starport"] == "C":
+                scout_base_die -= 1
+            elif system["Starport"] == "B":
+                scout_base_die -= 2
+            elif system["Starport"] == "A":
+                scout_base_die -= 3
+
+            if scout_base_die > 0:
+                system["Scout"] = "yes"
+
+       
+        if self.roll_dice(6) <= 4:
+            system["Gas"] = "no"
+
+        
+        main_world_name = f"Main World {die_roll}"
+
+       
+        main_world_upp = {
+            "Starport": system["Starport"],
+            "Size": self.roll_dice(6) + self.roll_dice(6) - 2,
+            "Atmosphere": max(0, self.roll_dice(6) + self.roll_dice(6) - 7 + main_world_upp["Size"]),
+            "Hydrographics": max(0, self.roll_dice(6) + self.roll_dice(6) - 7 + main_world_upp["Size"] - 4),
+            "Population": self.roll_dice(6) + self.roll_dice(6) - 2,
+            "Government": self.roll_dice(6) + self.roll_dice(6) - 7 + main_world_upp["Population"],
+            "Law Level": self.roll_dice(6) + self.roll_dice(6) - 7 + main_world_upp["Government"],
+            "Tech Level": self.roll_dice(6) + 4  
+        }
+
+        
+        print("Star System Statistics:")
+        print(system)
+        print(f"Main World Name: {main_world_name}")
+        print("Main World UPP:")
+        print(main_world_upp)
 
 
-        self.info = {"dice roll": self.mainworld}
-        self
+txt_file_path = "die.txt"
+
+generator = StarSystemGenerator(txt_file_path)
 
 
-
-
-#def generateClusters():
-    #c = 0
-    #cx = 0
-    #cy = 0
-    #cz = 0
-    #rad = random.uniform(CLUSRADA, CLUSRADB)
-    #num = random.uniform(NUMCLUSA, NUMCLUSB)
-    #clusters.append((cx, cy, cz, rad, num))
-    #c = 1
-    #while c < NUMCB:
-        # random distance from centre
-        #dist = random.uniform(CLUSRAD, GALX)
-        # any rotation- clusters can be anywhere
-        #theta = random.random() * 360
-        #cx = math.cos(theta * math.pi / 180.0) * dist
-        #cy = math.sin(theta * math.pi / 180.0) * dist
-        #cz = random.random() * GALZ * 2.0 - GALZ
-        #rad = random.uniform(CLUSRADA, CLUSRADB)
-        #num = random.uniform(NUMCLUSA, NUMCLUSB)
-        # add cluster to clusters array
-        #clusters.append((cx, cy, cz, rad, num))
-        # process next
-        #c = c+1
-        #sran = 0
-        #cran = 0
-
-
-
-
-
-
-
-
-
-
-
-
-
+generator.generate_star_system()
 
 
 

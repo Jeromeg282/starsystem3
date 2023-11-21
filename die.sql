@@ -12,5 +12,3 @@ import csv
 {"Die" : "10", "Starport" : "E", "Navel" : "yes" , "Scout" : "yes" , "Gas" : "no" , "Planetoids" : "no" }
 {"Die" : "11", "Starport" : "E", "Navel" : "yes" , "Scout" : "yes" , "Gas" : "no" , "Planetoids" : "no" }
 {"Die" : "12", "Starport" : "X", "Navel" : "yes" , "Scout" : "yes" , "Gas" : "no" , "Planetoids" : "no" }
-
-
