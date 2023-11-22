@@ -1,7 +1,6 @@
 import random
 import sqlite3
 import os
-import json
 
 class StarSystemGenerator:
     def __init__(self, system_name):
@@ -9,23 +8,47 @@ class StarSystemGenerator:
         self.mainworld = {}
 
     def load_definitions(self, filename):
-        script_dir = os.path.dirname(os.path.abspath(__file__))
+
+        script_dir = os.path.abspath(os.path.dirname(__file__))
         file_path = os.path.join(script_dir, filename)
-        #with open(file_path, 'r') as file:
-        with open(filename, 'r') as file:
-            definitions = json.load(file)
-        return definitions
+
+        print(f"Attempting to open file: {file_path}")
+
+        if file_path.endswith(".sql"):
+            with open(file_path, 'r') as file:
+                lines = file.readlines()
+
+                values = []
+                descriptions = []
+
+                for line in lines:
+                    if line.startswith("INSERT INTO"):
+                        parts = line.split("VALUES")
+                        if len(parts) > 1:
+                            values_part = parts[1].strip(" '\"\n()")
+                            values.extend([v.strip(" '\"\n") for v in values_part.split(",")])
+
+                            descriptions_part = parts[2].strip(" '\"\n()") if len(parts) > 2 else ""
+                            descriptions.extend([d.strip(" '\"\n") for d in descriptions_part.split(",")])
+
+            result = {"values": values, "descriptions": {k: v for k, v in zip(values, descriptions)}}
+            print(f"Loaded definitions: {result}")
+            return result
+        else:
+            raise ValueError("Unsupported file format. Only SQL files are supported.")
+
+
+
 
     def generate_mainworld(self):
-        #UPP
-        definitions_starport = self.load_definitions('starport_definitions.json')
-        definitions_size = self.load_definitions('size_definitions.json')
-        definitions_atmosphere = self.load_definitions('atmosphere_definitions.json')
-        definitions_hydros = self.load_definitions('hydros_definitions.json')
-        definitions_populus = self.load_definitions('populus_definitions.json')
-        definitions_gov = self.load_definitions('gov_definitions.json')
-        definitions_lawlevel = self.load_definitions('lawlevel_definitions.json')
-        definitions_techlevel = self.load_definitions('techlevel_definitions.json')
+        definitions_starport = self.load_definitions('starport_definitions.sql')
+        definitions_size = self.load_definitions('size_definitions.sql')
+        definitions_atmosphere = self.load_definitions('atmosphere_definitions.sql')
+        definitions_hydros = self.load_definitions('hydros_definitions.sql')
+        definitions_populus = self.load_definitions('populus_definitions.sql')
+        definitions_gov = self.load_definitions('gov_definitions.sql')
+        definitions_lawlevel = self.load_definitions('lawlevel_definitions.sql')
+        definitions_techlevel = self.load_definitions('techlevel_definitions.sql')
 
         self.mainworld["starport"] = self.get_definition(
             random.choice(definitions_starport["values"]), definitions_starport["descriptions"])
@@ -48,7 +71,6 @@ class StarSystemGenerator:
         conn = sqlite3.connect(db_filename)
         cursor = conn.cursor()
 
-        
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS star_systems (
                 id INTEGER PRIMARY KEY,
@@ -64,7 +86,6 @@ class StarSystemGenerator:
             )
         ''')
 
-    
         cursor.execute('''
             INSERT INTO star_systems 
             (system_name, starport, size, atmosphere, hydrographics, population, government, law_level, tech_level) 
@@ -81,7 +102,6 @@ class StarSystemGenerator:
             self.mainworld["tech_level"]
         ))
 
-        
         conn.commit()
         conn.close()
 
@@ -89,11 +109,9 @@ class StarSystemGenerator:
         conn = sqlite3.connect(db_filename)
         cursor = conn.cursor()
 
-        
         cursor.execute('SELECT * FROM star_systems WHERE system_name = ?', (self.system_name,))
         row = cursor.fetchone()
 
-    
         if row:
             print("Star System:", row[1])
             print("Starport:", row[2])
@@ -107,12 +125,15 @@ class StarSystemGenerator:
         else:
             print(f"No data found for the star system {self.system_name}")
 
-        
         conn.close()
 
     def get_definition(self, value, definitions):
-        return definitions.get(str(value), "Undefined")
-
+        if isinstance(definitions, list):
+            return definitions[int(value)]
+        elif isinstance(definitions, dict):
+            return definitions.get(str(value), "Undefined")
+        else:
+            return "Undefined"
 
 if __name__ == "__main__":
     system_name = "SampleSystem"
