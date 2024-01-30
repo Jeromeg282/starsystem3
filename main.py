@@ -3,7 +3,7 @@
 import sqlite3
 import random
 import json
-import names
+
 
 
 
@@ -83,8 +83,5 @@ class Star():
         return self.planetsize
 
 
-    def generateName(self):
-        self.Planetname = names.get_full_name()
-        return self.Planetname
+    
 
- 
