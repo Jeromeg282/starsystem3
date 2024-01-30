@@ -78,7 +78,13 @@ class Star():
         return self.scoutbase
 
 
+    def generatePlanetsize(self):
+        self.planetsize = sum(self.dice(2)) - 2
+        return self.planetsize
+
+
     def generateName(self):
         self.Planetname = names.get_full_name()
         return self.Planetname
 
+ 
