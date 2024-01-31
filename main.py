@@ -9,20 +9,23 @@ import json
 
 
 
-class Star():
-    def __init__(self) -> None:
+import sqlite3
+import random
+
+class Star:
+    def __init__(self):
         file = 'database.db'
         self.connection = sqlite3.connect(file)
         self.cursor = self.connection.cursor()
         query = """
         CREATE TABLE IF NOT EXISTS starsystem (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            planetName TINYTEXT,
+            planetName TEXT,
             starport INT,
-            navelbase BOOLEAN,
-            gasgiant TINYTEXT,
+            navalbase BOOLEAN,
+            gasgiant TEXT,
             planetoid INT,
-            scoutbase TINYTEXT,
+            scoutbase TEXT,
             size INT,
             atm INT,
             hyd INT,
@@ -33,9 +36,8 @@ class Star():
         );
         """
         self.cursor.execute(query)
-    
 
-    def starportType(self):
+    def starport_type(self):
         roll = sum(self.dice(2))
 
         if roll in [2, 3, 4]:
@@ -53,35 +55,68 @@ class Star():
 
         return self.starport
 
-
-
-    def isNavelBase(self):
+    def is_naval_base(self):
         roll = sum(self.dice(2))
-        self.navelbase = roll > 7
-        return self.navelbase
-        
+        self.navalbase = roll > 7
+        return self.navalbase
 
-    def isGasGiant(self):
+    def is_gas_giant(self):
         roll = sum(self.dice(2))
-        self.Gasgiant = roll > 9
-        return self.Gasgiant
-    
-    
-    def isPlanetoids(self):
+        self.gasgiant = roll > 9
+        return self.gasgiant
+
+    def is_planetoids(self):
         roll = sum(self.dice(2))
         self.planetoids = roll > 6
         return self.planetoids
-        
-    def isScoutBase(self):
+
+    def is_scout_base(self):
         roll = sum(self.dice(2))
         self.scoutbase = roll > 6
         return self.scoutbase
 
-
-    def generatePlanetsize(self):
+    def generate_planet_size(self):
         self.planetsize = sum(self.dice(2)) - 2
         return self.planetsize
 
+    def calculate_tech_lvl(self):
+        self.techlvl = sum(self.dice(1))
+        if self.starport == 10:
+            self.techlvl += 6
+        elif self.starport == 11:
+            self.techlvl += 4
+        elif self.starport == 12:
+            self.techlvl += 2
+        elif self.starport == 16:
+            self.techlvl -= 4
+        if self.planetsize in {0, 1}:
+            self.techlvl += 2
+        elif self.planetsize in {2, 3, 4}:
+            self.techlvl += 1
+        if self.atm < 4:
+            self.techlvl += 1
+        elif 9 < self.atm < 15:
+            self.techlvl += 1
+        if self.hyd == 9:
+            self.techlvl += 1
+        elif self.hyd == 10:
+            self.techlvl += 2
+        if 0 < self.population < 6:
+            self.techlvl += 1
+        elif self.population == 9:
+            self.techlvl += 2
+        elif self.population == 10:
+            self.techlvl += 4
+        if self.govt == 0:
+            self.techlvl += 1
+        elif self.govt == 5:
+            self.techlvl += 1
+        elif self.govt == 13:
+            self.techlvl -= 2
+        return self.techlvl
 
-    
+    def dice(self, n):
+        return [random.randint(1, 6) for _ in range(n)]
+
+
 
