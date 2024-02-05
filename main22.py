@@ -1,6 +1,8 @@
 import sqlite3
 import random
 import names
+
+
 class Star:
     def __init__(self):
         file = 'database.db'
@@ -14,7 +16,7 @@ class Star:
             navalbase BOOLEAN,
             gasgiant TEXT,
             planetoid INT,
-            scoutbase TEXT,
+            scoutbase BOOLEAN,
             size INT,
             atm INT,
             hyd INT,
@@ -64,62 +66,39 @@ class Star:
         self.scoutbase = roll > 6
         return self.scoutbase
 
+    def gen_name(self):
+        return names.get_first_name()
 
-    def genName(self):
-       
-        self.Planetname = names.get_full_name()
-        return self.Planetname
-    
-    def genPlanetSize(self): 
+    def gen_planet_size(self):
         self.planetsize = sum(self.dice(2)) - 2
         return self.planetsize
 
-
-
-
-    def generate_planet_size(self):
-        self.planetsize = sum(self.dice(2)) - 2
-        return self.planetsize
-
-
-    def PlanetUPP(self):
-        
-        '''
-        self.genAtm()
-        self.genHyd()
-        self.genPopulation()
-        self.genGovt()
-        self.Lawlvl()
-        self.dtTechlvl()
-        '''
+    def planet_upp(self):
         query = f"""
-    INSERT INTO starsystem (
-        planetname, starport, navelbase, gasgiant, planetoid, scoutbase,
-        size, atm, hyd, population, govt, lawlvl, techlvl
-    ) VALUES (
-        '{self.genName()}', '{self.starport_type()}',
-        '{self.is_naval_base()}', '{self.is_gas_giant()}',
-        '{self.is_planetoids()}', '{self.is_scout_base()}',
-        '{self.genPlanetSize()}', '{self.generate_atmosphere()}',
-        '{self.generate_hydrosphere()}',
-        '{self.generate_population()}', '{self.generate_government()}',
-        '{self.generate_law_level()}', '{self.calculate_tech_lvl()}'
-    );
-"""
+        INSERT INTO starsystem (
+            planetName, starport, navalbase, gasgiant, planetoid, scoutbase,
+            size, atm, hyd, population, govt, lawlvl, techlvl
+        ) VALUES (
+            '{self.gen_name()}', '{self.starport_type()}',
+            '{self.is_naval_base()}', '{self.is_gas_giant()}',
+            '{self.is_planetoids()}', '{self.is_scout_base()}',
+            '{self.gen_planet_size()}', '{self.generate_atmosphere()}',
+            '{self.generate_hydrosphere()}',
+            '{self.generate_population()}', '{self.generate_government()}',
+            '{self.generate_law_level()}', '{self.calculate_tech_lvl()}'
+        );
+        """
         self.cursor.execute(query)
         self.connection.commit()
 
-
-
-
-    def dice(self,num=1):  
-        randList = []  
+    def dice(self, num=1):
+        rand_list = []
         for i in range(num):
-            die = random.randint(1,6)
-            randList.append(die)
-        return randList
-    
-    def isTravel(self):
+            die = random.randint(1, 6)
+            rand_list.append(die)
+        return rand_list
+
+    def is_travel(self):
         pass
 
     def generate_atmosphere(self):
@@ -142,7 +121,6 @@ class Star:
     def generate_law_level(self):
         self.law = max(0, sum(self.dice(2)) - 7 + self.govt)
         return self.law
-
 
     def calculate_tech_lvl(self):
         self.techlvl = sum(self.dice(1))
@@ -180,11 +158,6 @@ class Star:
             self.techlvl -= 2
         return self.techlvl
 
-    def dice(self, n):
-        return [random.randint(1, 6) for _ in range(n)]
-
-
-
 
 class UniverseGeneration:
     def __init__(self):
@@ -217,6 +190,8 @@ class UniverseGeneration:
             self.search_by_category()
         elif self.selection == 9:
             self.get_all()
+        elif self.selection == 10:
+            self.generate_star()
         else:
             self.search_query()
 
@@ -242,7 +217,7 @@ class UniverseGeneration:
 
     def search_name(self):
         name = input("Enter the name of the planet you wish to search for: ")
-        query = f"SELECT * FROM starsystem WHERE planetname {self.symbol} '{name}'"
+        query = f"SELECT * FROM starsystem WHERE planetName {self.symbol} '{name}'"
         self.execute_query(query)
 
     def search_size(self):
@@ -311,6 +286,10 @@ class UniverseGeneration:
     def get_all(self):
         query = f"SELECT * FROM starsystem"
         self.execute_query(query)
+
+    def generate_star(self):
+        star = Star()
+        star.planet_upp()
 
 
 if __name__ == "__main__":
