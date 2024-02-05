@@ -1,7 +1,10 @@
 import sqlite3
 import random
 import names
+import prettytable
 from prettytable import PrettyTable
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QTableWidget, QTableWidgetItem, QComboBox
 
 
 class Star:
@@ -12,7 +15,7 @@ class Star:
         query = """
         CREATE TABLE IF NOT EXISTS starsystem (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            planetName TEXT,
+            planetname TEXT,
             starport INT,
             navalbase BOOLEAN,
             gasgiant TEXT,
@@ -168,16 +171,157 @@ class Star:
         return self.techlvl
 
 
-class UniverseGeneration:
+class UniverseGeneration(QWidget):
     def __init__(self):
+        super().__init__()
+        self.init_ui()
+
         self.file = 'database.db'
         self.connection = sqlite3.connect(self.file)
         self.cursor = self.connection.cursor()
         self.search_query()
 
+        # Set the form layout
+        self.formset = [
+            ('patient_name', 'appointment_date'),
+            ' ',
+            ('submit_button',)
+        ]
+
+    def init_ui(self):
+
+        self.label1 = QLabel('Enter search criteria with parameters:')
+        self.label2 = QLabel('Search results:')
+
+        # Create a QComboBox for menu option
+        self.option = QComboBox(self)
+        self.option.addItem('Search By Planet Name')
+        self.option.addItem('Search By Planet Size')
+        self.option.addItem('Search By Planet Atmosphere')
+        self.option.addItem('Search By Planet Hydrographics')
+        self.option.addItem('Search By Planet Population')
+        self.option.addItem('Search By Planet Government')
+        self.option.addItem('Search By Planet Law Level')
+        self.option.addItem('Search By Planet Technical Level')
+        self.option.addItem('Print All Planet Info')
+        self.option.addItem('Generate Star System')
+        self.option.currentIndexChanged.connect(self.onOptionChange)
+
+        # Create a QComboBox for search opeator
+        self.operator = QComboBox(self)
+        self.operator.addItem('<')
+        self.operator.addItem('=')
+        self.operator.addItem('>')
+        self.operator.currentIndexChanged.connect(self.onOperatorChange)
+
+        # Create a QLineEdit for search value
+        self.input = QLineEdit()
+        self.input.textChanged.connect(self.onInputChange)
+
+        # Create a QPushButton for the submit button
+        self.submit_button = QPushButton('Submit', self)
+        self.submit_button.clicked.connect(self.onSubmit)
+
+        # Create a QPushButton for the reset button
+        self.reset_button = QPushButton('Reset', self)
+        self.reset_button.clicked.connect(self.onReset)
+
+        # Create a QLabel to display the result
+        self.result_label = QLabel(self)
+
+        # Create a table widget
+        self.table_widget = QTableWidget(self)
+        self.table_widget.setMinimumSize(800, 700)
+
+        # Create a QVBoxLayout
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.label1)
+        vbox.addWidget(self.option)
+        vbox.addWidget(self.operator)
+        vbox.addWidget(self.input)
+        vbox.addWidget(self.submit_button)
+        vbox.addWidget(self.reset_button)
+        vbox.addWidget(self.result_label)
+        vbox.addWidget(self.label2)
+        vbox.addWidget(self.table_widget)
+        vbox.addStretch(2)
+
+        # Set the layout for the QWidget
+        self.setLayout(vbox)
+
+        # Set the window properties
+        self.setGeometry(300, 300, 300, 150)
+        self.setWindowTitle('Star Systems Application')
+        self.show()
+
+    def onOptionChange(self):
+        self.selected_index = self.option.currentIndex()+1
+        #self.label.setText(f'Menu option: {self.selected_index}')
+        
+    def onOperatorChange(self):
+        self.selected_option = self.operator.currentText()
+        #self.label.setText(f'Menu option: {self.selected_option} ')
+
+    def onInputChange(self):
+        self.selected_option = self.input.text()
+        #self.label.setText(f'Menu option: {self.selected_option} ')         
+
+    def onReset(self):
+        self.input.setText("")
+        self.option.setCurrentIndex(0)
+        self.operator.setCurrentIndex(0)    
+        self.result_label.setText("")
+
+    def onSubmit(self):
+        self.input_text = self.input.text()
+        result = f"Entered search criteria : {self.option.currentText()} {self.operator.currentText()} {self.input_text} \n"    
+        self.result_label.setText(result)
+
+        if (self.option.currentIndex() == 0):        
+            query = f"SELECT * FROM starsystem WHERE planetName {self.operator.currentText()}'{self.input_text}'"
+            self.execute_query_gui(query)
+
+        elif (self.option.currentIndex() == 1): 
+            query = f"SELECT * FROM starsystem WHERE size {self.operator.currentText()} {self.input_text}"
+            self.execute_query_gui(query)
+
+        elif (self.option.currentIndex() == 2): 
+            query = f"SELECT * FROM starsystem WHERE atm {self.operator.currentText()} {self.input_text}"
+            self.execute_query_gui(query)
+
+        elif (self.option.currentIndex() == 3): 
+            query = f"SELECT * FROM starsystem WHERE hyd {self.operator.currentText()} {self.input_text}"
+            self.execute_query_gui(query)
+
+        elif (self.option.currentIndex() == 4): 
+            query = f"SELECT * FROM starsystem WHERE population {self.operator.currentText()} {self.input_text}"
+            self.execute_query_gui(query)
+
+        elif (self.option.currentIndex() == 5): 
+            query = f"SELECT * FROM starsystem WHERE govt {self.operator.currentText()} {self.input_text}"
+            self.execute_query_gui(query)
+ 
+        elif (self.option.currentIndex() == 6): 
+            query = f"SELECT * FROM starsystem WHERE lawlvl {self.operator.currentText()} {self.input_text}"
+            self.execute_query_gui(query)
+            
+        elif (self.option.currentIndex() == 7): 
+            query = f"SELECT * FROM starsystem WHERE techlvl {self.operator.currentText()} {self.input_text}"
+            self.execute_query_gui(query)
+  
+        elif (self.option.currentIndex() == 8): 
+            query = f"SELECT * FROM starsystem"
+            self.execute_query_gui(query)
+
+        elif (self.option.currentIndex() == 9): 
+            star = Star()
+            star.planet_upp()
+
+
+
     def search_query(self):
         print("""
-            \n\n***************************Welcome to the Star Systems Console*****************************  
+            \n\n***************************  Welcome to the Star Systems Console  *****************************  
             \nThe menu options are: \n
             \033[38;5;221mOption[1]\033[0m <---Search By Planet Name---> 
             \033[38;5;221mOption[2]\033[0m <---Search By Planet Size--->
@@ -185,12 +329,11 @@ class UniverseGeneration:
             \033[38;5;221mOption[4]\033[0m <---Search By Planet Hydrographics---> 
             \033[38;5;221mOption[5]\033[0m <---Search By Planet Population---> 
             \033[38;5;221mOption[6]\033[0m <---Search By Planet Government---> 
-            \033[38;5;221mOption[7]\033[0m <---Search By Planet Law level---> 
-            \033[38;5;221mOption[8]\033[0m <---Search By Planet Technical level--->  
+            \033[38;5;221mOption[7]\033[0m <---Search By Planet Law Level---> 
+            \033[38;5;221mOption[8]\033[0m <---Search By Planet Technical Level--->  
             \033[38;5;221mOption[9]\033[0m <---Print All Planet Info--->  
             \033[38;5;221mOption[10]\033[0m <---Generate Star System--->              
-            \n********************************************************************************************  
-              
+            \n*************************************************************************************************              
         """)
         try:
             self.selection = int(input("Please enter your menu option here: \n\n"))
@@ -248,11 +391,55 @@ class UniverseGeneration:
             t.add_row([{i[1]}, {i[2]}, {i[3]}, {i[4]}, {i[5]}, {i[6]}, {i[7]}, {i[8]}, {i[9]}, {i[10]}, {i[11]}, {i[12]}, {i[13]}])
         print(t)
 
+    def display_result_GUI(self, result):
+        row = 0
+        while result.next():
+            self.table_widget.insertRow(row)
+            for column in range(result.record().count()):
+                item = QTableWidgetItem(str(query.value(column)))
+                self.table_widget.setItem(row, column, item)
+            row += 1
+
+
     def execute_query(self, query):
         self.cursor.execute(query)
         result = self.cursor.fetchall()
         self.display_result(result)
+        #self.display_result_GUI(result)
         self.search_query()
+
+
+    def execute_query_gui(self, query):
+        self.cursor.execute(query)
+        results = self.cursor.fetchall()
+        self.build_table(results) 
+
+    def build_table(self, data):
+        # Clear existing rows and columns in the table
+        self.table_widget.setRowCount(0)
+        self.table_widget.setColumnCount(0)
+
+        if not data:
+            return
+
+        # Set the column count based on the number of columns in the query result
+        column_count = len(data[0])
+        self.table_widget.setColumnCount(column_count)
+
+        # Set the column headers
+        for col, header in enumerate(self.cursor.description):
+            self.table_widget.setHorizontalHeaderItem(col, QTableWidgetItem(header[0]))
+
+        # Populate the table with data
+        for row, row_data in enumerate(data):
+            self.table_widget.insertRow(row)
+            for col, value in enumerate(row_data):
+                item = QTableWidgetItem(str(value))
+                self.table_widget.setItem(row, col, item)
+
+        #resize        
+        self.table_widget.resizeColumnsToContents()        
+        
 
     def search_name(self):
         name = input("Enter the name of the planet to search for: ")
@@ -330,6 +517,8 @@ class UniverseGeneration:
         star = Star()
         star.planet_upp()
 
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = UniverseGeneration()
+    sys.exit(app.exec_())
 
-if __name__ == "__main__":
-    UniverseGeneration()
