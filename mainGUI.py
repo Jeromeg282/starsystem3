@@ -39,7 +39,7 @@ class Star:
         for i in result:
             print(i)
         self.cursor.connection.commit
-        
+
     def starport_type(self):
         roll = sum(self.dice(2))
 
@@ -183,6 +183,7 @@ class UniverseGeneration(QWidget):
         self.columns =['id', 'planetname', 'starport', 'navalbase', 'gasgiant', 'planetoid',
             'scoutbase','size','atm','hyd','population','govt','lawlvl','techlvl'
         ]
+        
 
 
     def init_ui(self):
