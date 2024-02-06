@@ -38,8 +38,8 @@ class Star:
         print("Num, Name, StarportLevel, NavelBase, GasGiant, ScoutBase, Size, Atm, Hyd, Population, Government, LawLevel, TechLevel\n")
         for i in result:
             print(i)
+        self.cursor.connection.commit
         
-
     def starport_type(self):
         roll = sum(self.dice(2))
 
@@ -268,6 +268,8 @@ class UniverseGeneration(QWidget):
         self.option.setCurrentIndex(0)
         self.operator.setCurrentIndex(0)    
         self.result_label.setText("")
+        self.cursor.connection.commit
+
 
     def onSubmit(self):
         self.input_text = self.input.text()
