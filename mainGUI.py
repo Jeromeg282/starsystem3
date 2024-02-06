@@ -316,12 +316,13 @@ class UniverseGeneration(QWidget):
 
     def onCellClicked(self, row, column):
         item = self.table_widget.item(row,  column)
-        name_value, ok = QInputDialog.getText(self, "Update Value", "Enter new value here:")
+        new_value, ok = QInputDialog.getText(self, "Update Cell Value", "Enter new value here:")
         if ok:
             item.setText(new_value)
-            query = f"UPDATE starsystems SET {self.columns[column]} = {new_value} WHERE id = {row+1}"
+            query = f"UPDATE starsystem SET {self.columns[column]} = {new_value} WHERE id = {row+1}"
             self.cursor.execute(query)
             self.connection.commit
+            self.get_all_gui
 
     def search_query(self):
         print("""
@@ -395,21 +396,11 @@ class UniverseGeneration(QWidget):
             t.add_row([{i[1]}, {i[2]}, {i[3]}, {i[4]}, {i[5]}, {i[6]}, {i[7]}, {i[8]}, {i[9]}, {i[10]}, {i[11]}, {i[12]}, {i[13]}])
         print(t)
 
-    def display_result_GUI(self, result):
-        row = 0
-        while result.next():
-            self.table_widget.insertRow(row)
-            for column in range(result.record().count()):
-                item = QTableWidgetItem(str(query.value(column)))
-                self.table_widget.setItem(row, column, item)
-            row += 1
-
 
     def execute_query(self, query):
         self.cursor.execute(query)
         result = self.cursor.fetchall()
         self.display_result(result)
-        #self.display_result_GUI(result)
         self.search_query()
 
 
@@ -516,6 +507,10 @@ class UniverseGeneration(QWidget):
     def get_all(self):
         query = f"SELECT * FROM starsystem"
         self.execute_query(query)
+
+    def get_all_gui(self):
+        query = f"SELECT * FROM starsystem"
+        self.execute_query_gui(query)    
 
     def generate_star(self):
         star = Star()
