@@ -4,7 +4,7 @@ import names
 import prettytable
 from prettytable import PrettyTable
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QTableWidget, QTableWidgetItem, QComboBox
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QTableWidget, QTableWidgetItem, QComboBox, QInputDialog
 
 
 class Star:
@@ -179,14 +179,11 @@ class UniverseGeneration(QWidget):
         self.file = 'database.db'
         self.connection = sqlite3.connect(self.file)
         self.cursor = self.connection.cursor()
-        self.search_query()
-
-        # Set the form layout
-        self.formset = [
-            ('patient_name', 'appointment_date'),
-            ' ',
-            ('submit_button',)
+        
+        self.columns =['id', 'planetname', 'starport', 'navalbase', 'gasgiant', 'planetoid',
+            'scoutbase','size','atm','hyd','population','govt','lawlvl','techlvl'
         ]
+
 
     def init_ui(self):
 
@@ -232,7 +229,7 @@ class UniverseGeneration(QWidget):
         # Create a table widget
         self.table_widget = QTableWidget(self)
         self.table_widget.setMinimumSize(800, 700)
-
+        self.table_widget.cellClicked.connect(self.onCellClicked)
         # Create a QVBoxLayout
         vbox = QVBoxLayout()
         vbox.addWidget(self.label1)
@@ -317,7 +314,14 @@ class UniverseGeneration(QWidget):
             star = Star()
             star.planet_upp()
 
-
+    def onCellClicked(self, row, column):
+        item = self.table_widget.item(row,  column)
+        name_value, ok = QInputDialog.getText(self, "Update Value", "Enter new value here:")
+        if ok:
+            item.setText(new_value)
+            query = f"UPDATE starsystems SET {self.columns[column]} = {new_value} WHERE id = {row+1}"
+            self.cursor.execute(query)
+            self.connection.commit
 
     def search_query(self):
         print("""
@@ -326,7 +330,7 @@ class UniverseGeneration(QWidget):
             \033[38;5;221mOption[1]\033[0m <---Search By Planet Name---> 
             \033[38;5;221mOption[2]\033[0m <---Search By Planet Size--->
             \033[38;5;221mOption[3]\033[0m <---Search By Planet Atmosphere---> 
-            \033[38;5;221mOption[4]\033[0m <---Search By Planet Hydrographics---> 
+            \033[38;5;221mOption[4]\033[0m <---Se   arch By Planet Hydrographics---> 
             \033[38;5;221mOption[5]\033[0m <---Search By Planet Population---> 
             \033[38;5;221mOption[6]\033[0m <---Search By Planet Government---> 
             \033[38;5;221mOption[7]\033[0m <---Search By Planet Law Level---> 
