@@ -38,7 +38,6 @@ class Star:
         print("Num, Name, StarportLevel, NavelBase, GasGiant, ScoutBase, Size, Atm, Hyd, Population, Government, LawLevel, TechLevel\n")
         for i in result:
             print(i)
-        self.cursor.connection.commit
 
     def starport_type(self):
         roll = sum(self.dice(2))
@@ -269,7 +268,7 @@ class UniverseGeneration(QWidget):
         self.option.setCurrentIndex(0)
         self.operator.setCurrentIndex(0)    
         self.result_label.setText("")
-        self.cursor.connection.commit
+        self.cursor.connection.commit()
 
 
     def onSubmit(self):
@@ -324,8 +323,8 @@ class UniverseGeneration(QWidget):
             item.setText(new_value)
             query = f"UPDATE starsystem SET {self.columns[column]} = {new_value} WHERE id = {row+1}"
             self.cursor.execute(query)
-            self.connection.commit
-            self.get_all_gui
+            self.connection.commit()
+            self.get_all_gui()
 
     def search_query(self):
         print("""
